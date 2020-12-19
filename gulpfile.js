@@ -1,5 +1,3 @@
-"use strict";
-
 const { src, dest, watch, parallel, series } = require("gulp");
 const scss = require("gulp-sass");
 const concat = require("gulp-concat");
@@ -22,6 +20,10 @@ function cleanDist() {
   return del("dist");
 }
 
+function cleanDistWithoutImg() {
+  return del(["dist/**", "!dist/img/**"]);
+}
+
 function images() {
   return src("app/img/**/*")
     .pipe(
@@ -40,7 +42,7 @@ function images() {
 
 function scripts() {
   return src([
-    // "other scripts",
+    //other scripts
     "app/js/main.js",
   ])
     .pipe(concat("main.min.js"))
@@ -86,6 +88,9 @@ exports.styles = styles;
 exports.watching = watching;
 exports.scripts = scripts;
 exports.images = images;
+exports.cleanDist = cleanDist;
+exports.cleanDistWithoutImg = cleanDistWithoutImg;
 
-exports.build = series(cleanDist, images, build);
+exports.build = series(cleanDistWithoutImg, build);
+exports.buildWithImages = series(cleanDist, images, build);
 exports.default = parallel(styles, scripts, browsersync, watching);

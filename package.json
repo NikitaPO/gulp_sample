@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "buid": "gulp buid",
+    "buid:full": "gulp buildWithImages",
     "start": "gulp"
   },
   "author": "",
