@@ -2,13 +2,14 @@
   "name": "gulp_sample",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app/index.html",
   "scripts": {
-    "buid": "gulp buid",
-    "buid:full": "gulp buildWithImages",
-    "start": "gulp"
+    "watch": "gulp",
+    "build": "gulp build",
+    "public": "gulp gitPublic",
+    "build:full": "gulp buildWithImages"
   },
-  "author": "",
+  "author": "Nikita P",
   "license": "ISC",
   "devDependencies": {
     "browser-sync": "^2.26.13",

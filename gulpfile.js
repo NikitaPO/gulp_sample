@@ -20,6 +20,10 @@ function cleanDist() {
   return del("dist");
 }
 
+function cleanDocs() {
+  return del("docs");
+}
+
 function cleanDistWithoutImg() {
   return del(["dist/**", "!dist/img/**"]);
 }
@@ -77,6 +81,19 @@ function build() {
   ).pipe(dest("dist"));
 }
 
+function copyToDocs() {
+  return src(
+    [
+      "dist/css/style.min.css",
+      "dist/fonts/**/*",
+      "dist/img/**/*",
+      "dist/js/main.min.js",
+      "dist/*.html",
+    ],
+    { base: "dist" }
+  ).pipe(dest("docs"));
+}
+
 function watching() {
   watch("app/scss/**/*.scss", styles);
   watch(["app/js/**/*.js", "!app/js/main.min.js"], scripts);
@@ -89,8 +106,11 @@ exports.watching = watching;
 exports.scripts = scripts;
 exports.images = images;
 exports.cleanDist = cleanDist;
+exports.cleanDocs = cleanDocs;
 exports.cleanDistWithoutImg = cleanDistWithoutImg;
+exports.copyToDocs = copyToDocs;
 
 exports.build = series(cleanDistWithoutImg, build);
 exports.buildWithImages = series(cleanDist, images, build);
+exports.gitPublic = series(cleanDocs, copyToDocs);
 exports.default = parallel(styles, scripts, browsersync, watching);
