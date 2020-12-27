@@ -6,7 +6,8 @@
   "scripts": {
     "watch": "gulp",
     "build": "gulp build",
-    "public": "gulp gitPublic",
+    "public": "gulp public",
+    "public:full": "gulp publicWithImages",
     "build:full": "gulp buildWithImages"
   },
   "author": "Nikita P",

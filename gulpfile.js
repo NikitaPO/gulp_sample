@@ -45,11 +45,8 @@ function images() {
 }
 
 function scripts() {
-  return src([
-    //other scripts
-    "app/js/main.js",
-  ])
-    .pipe(concat("main.min.js"))
+  return src(["app/js/index.js"])
+    .pipe(concat("index.min.js"))
     .pipe(uglify())
     .pipe(dest("app/js/"))
     .pipe(browserSync.stream());
@@ -57,8 +54,8 @@ function scripts() {
 
 function styles() {
   return src("app/scss/style.scss")
-    .pipe(scss({ outputStyle: "compressed" }).on("error", scss.logError))
     .pipe(concat("style.min.css"))
+    .pipe(scss({ outputStyle: "compressed" }).on("error", scss.logError))
     .pipe(
       autoprefixer({
         overrideBrowserslist: ["last 10 versions"],
@@ -74,7 +71,7 @@ function build() {
     [
       "app/css/style.min.css",
       "app/fonts/**/*",
-      "app/js/main.min.js",
+      "app/js/index.min.js",
       "app/*.html",
     ],
     { base: "app" }
@@ -87,7 +84,7 @@ function copyToDocs() {
       "dist/css/style.min.css",
       "dist/fonts/**/*",
       "dist/img/**/*",
-      "dist/js/main.min.js",
+      "dist/js/index.min.js",
       "dist/*.html",
     ],
     { base: "dist" }
@@ -96,7 +93,7 @@ function copyToDocs() {
 
 function watching() {
   watch("app/scss/**/*.scss", styles);
-  watch(["app/js/**/*.js", "!app/js/main.min.js"], scripts);
+  watch(["app/js/**/*.js", "!app/js/index.min.js"], scripts);
   watch("app/*.html").on("change", browserSync.reload);
 }
 
@@ -110,7 +107,16 @@ exports.cleanDocs = cleanDocs;
 exports.cleanDistWithoutImg = cleanDistWithoutImg;
 exports.copyToDocs = copyToDocs;
 
-exports.build = series(cleanDistWithoutImg, build);
-exports.buildWithImages = series(cleanDist, images, build);
-exports.gitPublic = series(cleanDocs, copyToDocs);
+const fullBuild = series(styles, scripts, build);
+
+exports.build = series(cleanDistWithoutImg, fullBuild);
+exports.buildWithImages = series(cleanDist, images, fullBuild);
+exports.publicWithImages = series(
+  cleanDist,
+  images,
+  fullBuild,
+  cleanDocs,
+  copyToDocs
+);
+exports.public = series(cleanDistWithoutImg, fullBuild, cleanDocs, copyToDocs);
 exports.default = parallel(styles, scripts, browsersync, watching);
